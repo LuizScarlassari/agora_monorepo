@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import type { Deputy, Vote } from '../types';
 import { getVotesForDeputy } from '../services/camaraApi';
-import { getVotesForCandidate } from '../services/geminiApi';
 import VoteCard from './VoteCard';
-import { ArrowLeft, StarIcon, BallotIcon } from './Icons';
+import { ArrowLeft, StarIcon } from './Icons';
 import { isDeputyFavorite, addFavoriteDeputy, removeFavoriteDeputy } from '../utils/favorites';
 
 interface DeputyVotesScreenProps {
@@ -13,16 +12,13 @@ interface DeputyVotesScreenProps {
 
 const DeputyVotesScreen: React.FC<DeputyVotesScreenProps> = ({ deputy, onBack }) => {
   const [votes, setVotes] = useState<Vote[]>([]);
-  const [electionVotes, setElectionVotes] = useState<number | null>(null);
   const [loadingVotes, setLoadingVotes] = useState(true);
-  const [loadingElectionData, setLoadingElectionData] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     setIsFavorite(isDeputyFavorite(deputy.id));
     
-    const fetchAllData = async () => {
-      // Fetch legislative votes
+    const fetchLegislativeVotes = async () => {
       setLoadingVotes(true);
       try {
         const data = await getVotesForDeputy(deputy.id);
@@ -32,21 +28,9 @@ const DeputyVotesScreen: React.FC<DeputyVotesScreenProps> = ({ deputy, onBack })
       } finally {
         setLoadingVotes(false);
       }
-      
-      // Fetch election votes from Gemini
-      setLoadingElectionData(true);
-      try {
-        const electionData = await getVotesForCandidate(deputy.name, deputy.state);
-        setElectionVotes(electionData);
-      } catch (error) {
-        console.error("Failed to load election data from Gemini.", error);
-        setElectionVotes(0); // Set to 0 on error
-      } finally {
-        setLoadingElectionData(false);
-      }
     };
-    fetchAllData();
-  }, [deputy.id, deputy.name, deputy.state]);
+    fetchLegislativeVotes();
+  }, [deputy.id]);
   
   const handleToggleFavorite = () => {
     if (isFavorite) {
@@ -86,14 +70,6 @@ const DeputyVotesScreen: React.FC<DeputyVotesScreenProps> = ({ deputy, onBack })
             </button>
           </div>
           <p className="text-xl text-slate-600">{deputy.party} - {deputy.state}</p>
-           <div className="mt-2 inline-flex items-center space-x-2 text-md text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
-                <BallotIcon className="w-5 h-5" />
-                {loadingElectionData ? (
-                    <span>Carregando votos...</span>
-                ) : (
-                    <span>{electionVotes ? electionVotes.toLocaleString('pt-BR') : 'N/A'} votos na última eleição</span>
-                )}
-            </div>
         </div>
       </header>
 

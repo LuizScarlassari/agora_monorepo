@@ -69,7 +69,6 @@ export const getAllDeputies = async (): Promise<Deputy[]> => {
         party: apiDeputy.siglaPartido,
         state: apiDeputy.siglaUf,
         photoUrl: apiDeputy.urlFoto.replace('http://', 'https://'),
-        // lastElectionVotes is removed from here and fetched on the details screen
       }));
 
       allDeputies = [...allDeputies, ...mappedDeputies];

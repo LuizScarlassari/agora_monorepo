@@ -4,7 +4,6 @@ export interface Deputy {
   party: string;
   state: string;
   photoUrl: string;
-  lastElectionVotes?: number;
 }
 
 export enum VoteType {
