@@ -1,0 +1,5 @@
+{
+  "name": "Fiscalize Meu Voto",
+  "description": "An application to track and provide feedback on the votes of Brazilian federal deputies. Users can search for deputies, view their voting records, and register their approval or disapproval for each vote.",
+  "requestFramePermissions": []
+}
